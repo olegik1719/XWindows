@@ -49,6 +49,9 @@ public class Sheet {
     private static final List<String> SCOPES =
             Collections.singletonList(SheetsScopes.SPREADSHEETS_READONLY);
 
+    private static Credential credential = null;
+    private static Sheets service = null;
+
     static {
         try {
             HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -66,22 +69,24 @@ public class Sheet {
      */
     public static Credential authorize() throws IOException {
         // Load client secrets.
-        InputStream in =
-                Sheet.class.getResourceAsStream("/client_secret.json");
-        GoogleClientSecrets clientSecrets =
-                GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+        if (credential == null) {
+            InputStream in =
+                    Sheet.class.getResourceAsStream("/client_secret.json");
+            GoogleClientSecrets clientSecrets =
+                    GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
-        // Build flow and trigger user authorization request.
-        GoogleAuthorizationCodeFlow flow =
-                new GoogleAuthorizationCodeFlow.Builder(
-                        HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                        .setDataStoreFactory(DATA_STORE_FACTORY)
-                        .setAccessType("offline")
-                        .build();
-        Credential credential = new AuthorizationCodeInstalledApp(
-                flow, new LocalServerReceiver()).authorize("user");
-        System.out.println(
-                "Credentials saved to " + DATA_STORE_DIR.getAbsolutePath());
+            // Build flow and trigger user authorization request.
+            GoogleAuthorizationCodeFlow flow =
+                    new GoogleAuthorizationCodeFlow.Builder(
+                            HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+                            .setDataStoreFactory(DATA_STORE_FACTORY)
+                            .setAccessType("offline")
+                            .build();
+            credential = new AuthorizationCodeInstalledApp(
+                    flow, new LocalServerReceiver()).authorize("user");
+            System.out.println(
+                    "Credentials saved to " + DATA_STORE_DIR.getAbsolutePath());
+        }
         return credential;
     }
 
@@ -92,9 +97,12 @@ public class Sheet {
      */
     public static Sheets getSheetsService() throws IOException {
         Credential credential = authorize();
-        return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
-                .setApplicationName(APPLICATION_NAME)
-                .build();
+        if (service == null){
+            service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+        }
+        return service;
     }
 
     public static void main(String[] args) throws IOException {
@@ -121,49 +129,26 @@ public class Sheet {
     }
 
     public static Object[][] getValues(String spreadsheetId) throws IOException{
-        Sheets service = getSheetsService();
-
-        // Prints the names and majors of students in a sample spreadsheet:
-        // https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-        // https://docs.google.com/spreadsheets/d/17B-dK9kHpdWW1X-0QxQkPH9VYG_1RGs6V2_XDZyzXhc
-        //String spreadsheetId = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms";
-        //String spreadsheetId = "17B-dK9kHpdWW1X-0QxQkPH9VYG_1RGs6V2_XDZyzXhc";
-        String range = "ЖКС2!A2:B";
-        ValueRange response = service.spreadsheets().values()
-                .get(spreadsheetId, range)
-                .execute();
-        List<List<Object>> values = response.getValues();
-//        Object[][] result = null;
-//        Object[][] result = getRange(values);
         return getValues(spreadsheetId, "ЖКС2", "A2:B");
     }
 
     public static Object[][] getValues(String spreadsheetId, String page, String rangePage) throws IOException{
         Sheets service = getSheetsService();
 
-        // Prints the names and majors of students in a sample spreadsheet:
-        // https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-        // https://docs.google.com/spreadsheets/d/17B-dK9kHpdWW1X-0QxQkPH9VYG_1RGs6V2_XDZyzXhc
-        //String spreadsheetId = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms";
-        //String spreadsheetId = "17B-dK9kHpdWW1X-0QxQkPH9VYG_1RGs6V2_XDZyzXhc";
         String range = page + "!" + rangePage;
         ValueRange response = service.spreadsheets().values()
                 .get(spreadsheetId, range)
                 .execute();
         List<List<Object>> values = response.getValues();
-//        Object[][] result = null;
-//        result = getRange(values);
         return getRange(values);
     }
 
     private static Object[][] getRange(List<List<Object>> values) {
         Object[][] result;
         if (values == null || values.size() == 0) {
-            //System.out.println("No data found.");
             result = null;
         }
         else {
-            //System.out.println("Name!, Major");
             result = new Object[values.size()][2];
             int i = 0;
             for (List row : values) {
@@ -184,6 +169,12 @@ public class Sheet {
             result[i] = (String) pretendent[i];
         }
         return result;
+    }
+
+    public static String[] getPages(String spreadsheetId) throws IOException {
+        Sheets service = getSheetsService();
+        Object response = service.spreadsheets().sheets();
+        return null;
     }
 
 }
