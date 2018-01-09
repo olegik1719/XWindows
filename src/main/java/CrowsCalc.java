@@ -1,3 +1,8 @@
+/*
+* Взято с
+* https://ru.wikibooks.org/wiki/Java/%D0%9F%D0%B5%D1%80%D0%B2%D0%BE%D0%B5_%D0%BE%D0%BA%D0%BD%D0%BE
+ */
+
 import java.awt.*;
 //import java.awt.event.*;
 import javax.swing.*;
@@ -8,7 +13,7 @@ public class CrowsCalc extends JFrame {
     private JButton addCrow;
     private JButton removeCrow;
 
-    public CrowsCalc(){
+    private CrowsCalc(){
         super("Crow calculator");
         //Подготавливаем компоненты объекта
         countLabel = new JLabel("Crows:" + crows);
@@ -21,8 +26,6 @@ public class CrowsCalc extends JFrame {
         JPanel buttonsPanel = new JPanel(new FlowLayout());
         //Расставляем компоненты по местам
         add(countLabel, BorderLayout.NORTH); //О размещении компонент поговорим позже
-
-
         buttonsPanel.add(addCrow);
         buttonsPanel.add(removeCrow);
 
