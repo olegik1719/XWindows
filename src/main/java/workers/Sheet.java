@@ -127,7 +127,8 @@ public class Sheet {
 //                System.out.printf("%s, %s\n", row.get(0), row.get(4));
 //            }
 //        }
-        System.out.printf("%s%n",getPages(spreadsheetId));
+        getPages(spreadsheetId);
+        //System.out.printf("%s%n",getPages(spreadsheetId));
     }
 
     public static Object[][] getValues(String spreadsheetId) throws IOException{
@@ -176,7 +177,12 @@ public class Sheet {
     public static String[] getPages(String spreadsheetId) throws IOException {
         Sheets service = getSheetsService();
         //List<String> sheets =
-                service.spreadsheets().get(spreadsheetId).
+        //System.out.printf("%s%n",service.spreadsheets().get(spreadsheetId).buildHttpRequest().execute().getContent().readAllBytes());
+        byte[] bytes = service.spreadsheets().get(spreadsheetId).buildHttpRequest().execute().getContent().readAllBytes();
+        for (int i = 0; i < bytes.length; i++) {
+            System.out.printf("%s", (char)bytes[i]);
+        }
+        System.out.printf("%n");
         //String[] strings = (String[])sheets.toArray();
         return null; //strings;
     }
