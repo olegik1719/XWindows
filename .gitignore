@@ -1,2 +1,3 @@
 # Ignore .idea working files
 .idea/
+src/main/resources/

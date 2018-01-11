@@ -18,14 +18,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 //import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Sheet {
+public class WorkerSheet {
 
     /** Application name. */
     private static final String APPLICATION_NAME =
-            "Google Sheets API Java Quickstart";
+            //"Google Sheets API Java Quickstart";
+            "Test application";
 
     /** Directory to store user credentials for this application. */
     private static final java.io.File DATA_STORE_DIR = new java.io.File(
@@ -112,7 +114,9 @@ public class Sheet {
         // Prints the names and majors of students in a sample spreadsheet:
         // https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
         //String spreadsheetId = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms";
-        String spreadsheetId = "17B-dK9kHpdWW1X-0QxQkPH9VYG_1RGs6V2_XDZyzXhc";
+        String spreadsheetId = new Properties().load("/sheets.properties").getProperty("table");
+                //"1HyvGs8KKoHfshAlAc_BVH6vIQdBheqtGeu0vDrCjFwo";
+                //"17B-dK9kHpdWW1X-0QxQkPH9VYG_1RGs6V2_XDZyzXhc";
 //        String range = "Class Data!A2:E";
 //        ValueRange response = service.spreadsheets().values()
 //                .get(spreadsheetId, range)
@@ -174,17 +178,23 @@ public class Sheet {
         return result;
     }
 
-    public static String[] getPages(String spreadsheetId) throws IOException {
+    public static ArrayList<String> getPages(String spreadsheetId) throws IOException {
         Sheets service = getSheetsService();
         //List<String> sheets =
         //System.out.printf("%s%n",service.spreadsheets().get(spreadsheetId).buildHttpRequest().execute().getContent().readAllBytes());
-        byte[] bytes = service.spreadsheets().get(spreadsheetId).buildHttpRequest().execute().getContent().readAllBytes();
-        for (int i = 0; i < bytes.length; i++) {
-            System.out.printf("%s", (char)bytes[i]);
+        //byte[] bytes =
+        ArrayList<String> strings = new ArrayList<>();
+
+        Spreadsheet spreadsheet = service.spreadsheets().get(spreadsheetId).execute();
+        List<Sheet> sheets = spreadsheet.getSheets();
+        System.out.printf("%s%n",spreadsheet.getProperties().getTitle());
+        for (Sheet sheet: sheets) {
+            //System.out.printf("%s%n",sheet.getProperties().getTitle());
+            strings.add(sheet.getProperties().getTitle());
         }
-        System.out.printf("%n");
+       System.out.printf("%n");
         //String[] strings = (String[])sheets.toArray();
-        return null; //strings;
+        return strings; //strings;
     }
 
 }
