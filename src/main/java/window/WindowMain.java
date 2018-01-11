@@ -28,10 +28,6 @@ public class WindowMain extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         menuBar = new JMenuBar();
         pages = new JMenu("Pages");
-//        String[] columnNames = {
-//                "Name","Major"
-//        };
-        //List<List<Object>> data = workers.Sheet.getValues();
         menuBar.add(pages);
         pageTitles = WorkerSheet.getPages(spreadsheetId);
         for (String string: pageTitles) {
@@ -75,18 +71,6 @@ public class WindowMain extends JFrame implements ActionListener {
             System.exit(1);
         }
 
-        //DefaultTableModel model = (DefaultTableModel) table.getModel();
-
         table.setModel(new DefaultTableModel(data,columnNames));
-
-        //table.removeColumn();
-//        table = new JTable(data, columnNames);
-//        table.setPreferredScrollableViewportSize(new Dimension(70, 150));
-//        table.setFillsViewportHeight(true);
-        //table.firePropertyChange();
-        //scrollPane = new JScrollPane(table);
-        //this.remove(this.);
-        //remove(scrollPane);
-        //add(scrollPane);
     }
 }

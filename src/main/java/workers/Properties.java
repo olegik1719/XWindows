@@ -9,7 +9,6 @@ public class Properties extends java.util.Properties {
                      getClass().getResourceAsStream(path)) {
             load(resourceAsStream);
         } catch (IOException ignored) {
-            // TODO: 2018/01/11 log???
             ignored.printStackTrace();
             System.exit(1);
         }

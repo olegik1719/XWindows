@@ -111,28 +111,8 @@ public class WorkerSheet {
         // Build a new authorized API client service.
         Sheets service = getSheetsService();
 
-        // Prints the names and majors of students in a sample spreadsheet:
-        // https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-        //String spreadsheetId = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms";
         String spreadsheetId = new Properties().load("/sheets.properties").getProperty("table");
-                //"1HyvGs8KKoHfshAlAc_BVH6vIQdBheqtGeu0vDrCjFwo";
-                //"17B-dK9kHpdWW1X-0QxQkPH9VYG_1RGs6V2_XDZyzXhc";
-//        String range = "Class Data!A2:E";
-//        ValueRange response = service.spreadsheets().values()
-//                .get(spreadsheetId, range)
-//                .execute();
-//        List<List<Object>> values = response.getValues();
-//        if (values == null || values.size() == 0) {
-//            System.out.println("No data found.");
-//        } else {
-//            System.out.println("Name, Major");
-//            for (List row : values) {
-//                // Print columns A and E, which correspond to indices 0 and 4.
-//                System.out.printf("%s, %s\n", row.get(0), row.get(4));
-//            }
-//        }
         getPages(spreadsheetId);
-        //System.out.printf("%s%n",getPages(spreadsheetId));
     }
 
     public static Object[][] getValues(String spreadsheetId) throws IOException{
@@ -180,20 +160,15 @@ public class WorkerSheet {
 
     public static ArrayList<String> getPages(String spreadsheetId) throws IOException {
         Sheets service = getSheetsService();
-        //List<String> sheets =
-        //System.out.printf("%s%n",service.spreadsheets().get(spreadsheetId).buildHttpRequest().execute().getContent().readAllBytes());
-        //byte[] bytes =
         ArrayList<String> strings = new ArrayList<>();
 
         Spreadsheet spreadsheet = service.spreadsheets().get(spreadsheetId).execute();
         List<Sheet> sheets = spreadsheet.getSheets();
         System.out.printf("%s%n",spreadsheet.getProperties().getTitle());
         for (Sheet sheet: sheets) {
-            //System.out.printf("%s%n",sheet.getProperties().getTitle());
             strings.add(sheet.getProperties().getTitle());
         }
        System.out.printf("%n");
-        //String[] strings = (String[])sheets.toArray();
         return strings; //strings;
     }
 
